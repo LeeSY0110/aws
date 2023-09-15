@@ -24,7 +24,37 @@ table = 'company'
 def home():
     return render_template('Home.html')
 
+@app.route("/studLogin", methods=['GET', 'POST'])
+def studLogin():
+    studEmail = request.form['studEmail']
+    studIc = request.form['studIc']
+    #status = "Pending Approval"
 
+
+    fetch_student_sql = "SELECT * FROM student WHERE studEmail = %s"
+    #fetch_company_sql = "SELECT * FROM company WHERE status = %s"
+    cursor = db_conn.cursor()
+
+    if studEmail == "" and studIc == "":
+        return render_template('StudLogin.html', empty_field=True)
+
+    try:
+        cursor.execute(fetch_student_sql, (studEmail))
+        records = cursor.fetchall()
+
+        # cursor.execute(fetch_company_sql, (status))
+        # companyRecords = cursor.fetchall()
+
+        if records and records[0][4] != studIc:
+            return render_template('StudLogin.html', login_failed=True)
+        else:
+            return render_template('StudPage.html', student=records)
+
+    except Exception as e:
+        return str(e)
+
+    finally:
+        cursor.close()
 
 @app.route("/companyReg", methods=['POST'])
 def companyReg():
