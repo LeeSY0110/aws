@@ -40,8 +40,7 @@ def studLogin():
     companyName = ""
     monthlyAllowance = ""
     companySvName = ""
-    companySvEmail = ""
-    #status = "Pending Approval"
+    companySvEmail = "
 
 
     fetch_student_sql = "SELECT * FROM student WHERE studEmail = %s"
