@@ -20,8 +20,12 @@ db_conn = connections.Connection(
 output = {}
 table = 'company'
 
+@app.route("/home", methods=['GET', 'POST'])
+def home():
+    return render_template('Home.html')
 
-@app.route("/", methods=['POST'])
+
+@app.route("/companyReg", methods=['POST'])
 def companyReg():
     companyName = request.form['companyName']
     companyEmail = request.form['companyEmail']
@@ -53,11 +57,6 @@ def companyReg():
         cursor.close()
 
     return render_template('CompanyLogin.html')
-
-@app.route("/home", methods=['GET', 'POST'])
-def home():
-    return render_template('Home.html')
-
 
 @app.route("/StudViewCompany")
 def StudViewCompany():
