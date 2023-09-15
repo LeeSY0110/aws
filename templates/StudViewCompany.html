@@ -6,14 +6,12 @@
     <meta name="description" content="">
     <title>StudViewCompany</title>
     <link rel="stylesheet" href="nicepage.css" media="screen">
-<link rel="stylesheet" href="StudViewCompany.css" media="screen">
-    <script class="u-script" type="text/javascript" src="jquery.js" defer=""></script>
-    <script class="u-script" type="text/javascript" src="nicepage.js" defer=""></script>
     <meta name="generator" content="Nicepage 5.17.1, nicepage.com">
     <link id="u-theme-google-font" rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:100,100i,300,300i,400,400i,500,500i,700,700i,900,900i|Open+Sans:300,300i,400,400i,500,500i,600,600i,700,700i,800,800i">
     <link id="u-page-google-font" rel="stylesheet" href="https://fonts.googleapis.com/css?family=Merriweather:300,300i,400,400i,700,700i,900,900i">
     
-    
+    <link rel="stylesheet" href="{{ url_for('static', filename='StudViewCompany.css') }}">
+	    <link rel="stylesheet" href="{{ url_for('static', filename='nicepage.css') }}">
     
     <script type="application/ld+json">{
 		"@context": "http://schema.org",
@@ -82,7 +80,9 @@
         <quillbot-extension-highlights style="position: absolute; top: 0px; left: 0px; pointer-events: none;"></quillbot-extension-highlights>
         <h1 class="u-text u-text-body-color u-text-default u-text-1">Companies</h1>
         <div class="u-border-3 u-border-grey-15 u-line u-line-horizontal u-line-1"></div>
-        <div class="u-align-center u-table u-table-responsive u-table-1">
+
+{% for row in company %}
+<div class="u-align-center u-table u-table-responsive u-table-1">
           <pwa-container-wrapper style="display: flex !important; height: 0px;"></pwa-container-wrapper>
           <table class="u-table-entity">
             <colgroup>
@@ -98,36 +98,39 @@
             <tbody class="u-align-left u-custom-font u-font-merriweather u-table-body u-table-body-1">
               <tr style="height: 32px;">
                 <td class="u-align-right u-border-1 u-border-black u-table-cell u-table-cell-3">Company Name</td>
-                <td class="u-border-1 u-border-black u-table-cell"></td>
+                <td class="u-border-1 u-border-black u-table-cell">{{ row[0] }}</td>
               </tr>
               <tr style="height: 48px;">
                 <td class="u-align-right u-border-1 u-border-black u-table-cell u-table-cell-5">Email<span style="font-size: 0.75rem;"></span>
                 </td>
-                <td class="u-border-1 u-border-black u-table-cell"></td>
+                <td class="u-border-1 u-border-black u-table-cell">{{ row[1] }}</td>
               </tr>
               <tr style="height: 34px;">
                 <td class="u-align-right u-border-1 u-border-black u-table-cell u-table-cell-7">Contact Number</td>
-                <td class="u-border-1 u-border-black u-table-cell"></td>
+                <td class="u-border-1 u-border-black u-table-cell">{{ row[2] }}</td>
               </tr>
               <tr style="height: 46px;">
                 <td class="u-align-right u-border-1 u-border-black u-table-cell u-table-cell-9">Address</td>
-                <td class="u-border-1 u-border-black u-table-cell"></td>
+                <td class="u-border-1 u-border-black u-table-cell">{{ row[3] }}</td>
               </tr>
               <tr style="height: 58px;">
                 <td class="u-align-right u-border-1 u-border-black u-table-cell u-table-cell-11">Type of Business</td>
-                <td class="u-border-1 u-border-black u-table-cell"></td>
+                <td class="u-border-1 u-border-black u-table-cell">{{ row[4] }}</td>
               </tr>
               <tr style="height: 58px;">
                 <td class="u-align-right u-border-1 u-border-black u-table-cell u-table-cell-13">Number of Employee</td>
-                <td class="u-border-1 u-border-black u-table-cell"></td>
+                <td class="u-border-1 u-border-black u-table-cell">{{ row[5] }}</td>
               </tr>
               <tr style="height: 84px;">
                 <td class="u-align-right u-border-1 u-border-black u-table-cell u-table-cell-15">Overview</td>
-                <td class="u-border-1 u-border-black u-table-cell"></td>
+                <td class="u-border-1 u-border-black u-table-cell">{{ row[6] }}</td>
               </tr>
             </tbody>
           </table>
         </div>
+{% endfor %}
+
+
       </div>
     </section>
     
