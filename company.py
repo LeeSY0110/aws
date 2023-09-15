@@ -57,7 +57,7 @@ def companyReg():
     finally:
         cursor.close()
 
-    return render_template('CompanyLogin.html', registerSuccessful=True)
+    return render_template('companyReg.html', registerSuccessful=True)
 
 @app.route("/StudViewCompany")
 def StudViewCompany():
