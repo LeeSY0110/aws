@@ -26,7 +26,7 @@ def home():
 
 @app.route("/studLogin", methods=['GET', 'POST'])
 def studLogin():
-cohort = request.form['cohort']
+    cohort = request.form['cohort']
     internPeriod = request.form['internPeriod']
     studName = request.form['studName']
     studId = request.form['studId']
