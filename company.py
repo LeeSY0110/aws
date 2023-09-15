@@ -238,8 +238,8 @@ def toCompanyLogin():
 def toCompanyRegister():
     return render_template('CompanyRegister.html') 
 
-@app.route("/toStudentRegister")
-def toStudentRegister():
+@app.route("/toStudRegister")
+def toStudRegister():
     return render_template('StudRegister.html') 
 
 @app.route("/companyLogin", methods=['GET', 'POST'])
