@@ -21,6 +21,27 @@ output = {}
 table = 'company'
 
 
+@app.route("/")
+def StudViewCompany():
+    status = "Approved"
+
+    fetch_company_sql = "SELECT * FROM company WHERE status = %s"
+    cursor = db_conn.cursor()
+
+    try:
+        cursor.execute(fetch_company_sql, (status))
+        companyRecords = cursor.fetchall()
+    
+        return render_template('StudViewCompany.html', company=companyRecords)    
+
+    except Exception as e:
+        return str(e)      
+
+    finally:
+        cursor.close()
+
+
+
 @app.route("/studRegister", methods=['POST'])
 def studRegister():
     cohort = request.form['cohort']
@@ -62,25 +83,6 @@ def studRegister():
     print("all modification done...")
     return render_template('StudRegister.html')
 
-
-@app.route("/")
-def StudViewCompany():
-    status = "Approved"
-
-    fetch_company_sql = "SELECT * FROM company WHERE status = %s"
-    cursor = db_conn.cursor()
-
-    try:
-        cursor.execute(fetch_company_sql, (status))
-        companyRecords = cursor.fetchall()
-    
-        return render_template('StudViewCompany.html', company=companyRecords)    
-
-    except Exception as e:
-        return str(e)      
-
-    finally:
-        cursor.close()
 
 
 @app.route("/companyReg", methods=['POST'])
