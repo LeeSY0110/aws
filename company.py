@@ -21,7 +21,7 @@ output = {}
 table = 'company'
 
 
-@app.route("/", methods=['GET', 'POST'])
+@app.route("/home", methods=['GET', 'POST'])
 def home():
     return render_template('Home.html')
 
