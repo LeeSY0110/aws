@@ -119,7 +119,7 @@ def studRegister():
         cursor.close()
 
     print("all modification done...")
-    return render_template('StudRegister.html')
+    return render_template('StudRegister.html', studRegisterSuccessfully = true)
 
 
 
@@ -238,9 +238,7 @@ def toCompanyLogin():
 def toCompanyRegister():
     return render_template('CompanyRegister.html') 
 
-@app.route("/toStudRegister")
-def toStudRegister():
-    return render_template('StudRegister.html', updateSuccessful=True) 
+
 
 @app.route("/companyLogin", methods=['GET', 'POST'])
 def companyLogin():
