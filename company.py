@@ -21,14 +21,69 @@ output = {}
 table = 'company'
 
 
-#if call / then will redirect to that pg
+@app.route("/", methods=['POST'])
+def studRegister():
+    cohort = request.form['cohort']
+    internPeriod = request.form['internPeriod']
+    studName = request.form['studName']
+    studId = request.form['studId']
+    studIc = request.form['studIc']
+    studGender = request.form['studGender']
+    programme = request.form['programme']
+    studEmail = request.form['studEmail']
+    studContact = request.form['studContact']
+    uniSupervisor = request.form['uniSupervisor']
+    uniEmail = request.form['uniEmail']
+    companyName = ""
+    monthlyAllowance = ""
+    companySvName = ""
+    companySvEmail = ""
 
-@app.route("/", methods=['GET', 'POST'])
-def home():
-    return render_template('Home.html')
+   
+    insert_sql = "INSERT INTO student VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+    cursor = db_conn.cursor()
+
+     
+
+    try:
+
+        cursor.execute(insert_sql, (cohort, internPeriod, studName, studId, studIc, studGender, programme, studEmail, studContact, uniSupervisor, uniEmail
+                                   ,companyName ,monthlyAllowance ,companySvName, companySvEmail))
+        db_conn.commit()
+        
+
+    except Exception as e:
+        return str(e) 
+        
+
+    finally:
+        cursor.close()
+
+    print("all modification done...")
+    return render_template('StudRegister.html')
 
 
-@app.route("/companyReg", methods=['POST'])
+@app.route("/StudViewCompany")
+def StudViewCompany():
+    status = "Approved"
+
+    fetch_company_sql = "SELECT * FROM company WHERE status = %s"
+    cursor = db_conn.cursor()
+
+    try:
+        cursor.execute(fetch_company_sql, (status))
+        companyRecords = cursor.fetchall()
+    
+        return render_template('StudViewCompany.html', company=companyRecords)    
+
+    except Exception as e:
+        return str(e)      
+
+    finally:
+        cursor.close()
+
+
+@app.route("/", methods=['POST'])
 def companyReg():
     companyName = request.form['companyName']
     companyEmail = request.form['companyEmail']
@@ -62,6 +117,10 @@ def companyReg():
     return render_template('CompanyLogin.html')
 
 
+
+@app.route("/home", methods=['GET', 'POST'])
+def home():
+    return render_template('Home.html')
 
 @app.route("/adminLogin", methods=['GET', 'POST'])
 def adminLogin():
