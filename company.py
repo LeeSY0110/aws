@@ -21,7 +21,7 @@ output = {}
 table = 'company'
 
 
-@app.route("/")
+@app.route("/StudViewCompany")
 def StudViewCompany():
     status = "Approved"
 
