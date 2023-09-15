@@ -238,6 +238,9 @@ def toCompanyLogin():
 def toCompanyRegister():
     return render_template('CompanyRegister.html') 
 
+@app.route("/toStudRegister")
+def toStudRegister():
+    return render_template('StudRegister.html', studRegisterSuccessfully = True) 
 
 
 @app.route("/companyLogin", methods=['GET', 'POST'])
