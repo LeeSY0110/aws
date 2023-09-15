@@ -20,7 +20,7 @@ db_conn = connections.Connection(
 output = {}
 table = 'company'
 
-@app.route("/home", methods=['GET', 'POST'])
+@app.route("/", methods=['GET', 'POST'])
 def home():
     return render_template('Home.html')
 
@@ -89,7 +89,7 @@ def companyReg():
 
     return render_template('CompanyRegister.html', registerSuccessful=True)
 
-@app.route("/")
+@app.route("/StudViewCompany")
 def StudViewCompany():
     status = "Approved"
 
