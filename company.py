@@ -21,7 +21,12 @@ output = {}
 table = 'company'
 
 
-@app.route("/", methods=['POST'])
+@app.route("/", methods=['GET', 'POST'])
+def home():
+    return render_template('Home.html')
+
+
+@app.route("/companyReg", methods=['POST'])
 def companyReg():
     companyName = request.form['companyName']
     companyEmail = request.form['companyEmail']
