@@ -26,8 +26,21 @@ def home():
 
 @app.route("/studLogin", methods=['GET', 'POST'])
 def studLogin():
-    studEmail = request.form['studEmail']
+cohort = request.form['cohort']
+    internPeriod = request.form['internPeriod']
+    studName = request.form['studName']
+    studId = request.form['studId']
     studIc = request.form['studIc']
+    studGender = request.form['studGender']
+    programme = request.form['programme']
+    studEmail = request.form['studEmail']
+    studContact = request.form['studContact']
+    uniSupervisor = request.form['uniSupervisor']
+    uniEmail = request.form['uniEmail']
+    companyName = ""
+    monthlyAllowance = ""
+    companySvName = ""
+    companySvEmail = ""
     #status = "Pending Approval"
 
 
