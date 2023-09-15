@@ -24,7 +24,7 @@ table = 'company'
 def home():
     return render_template('Home.html')
 
-@app.route("/studLogin", methods=['GET', 'POST'])
+@app.route("/StudLogin", methods=['GET', 'POST'])
 def studLogin():
     cohort = request.form['cohort']
     internPeriod = request.form['internPeriod']
