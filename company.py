@@ -124,9 +124,6 @@ def studRegister():
 
 
 
-@app.route("/home", methods=['GET', 'POST'])
-def home():
-    return render_template('Home.html')
 
 @app.route("/adminLogin", methods=['GET', 'POST'])
 def adminLogin():
