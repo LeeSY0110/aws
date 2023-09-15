@@ -40,7 +40,7 @@ def studLogin():
     companyName = ""
     monthlyAllowance = ""
     companySvName = ""
-    companySvEmail = "
+    companySvEmail = ""
 
 
     fetch_student_sql = "SELECT * FROM student WHERE studEmail = %s"
