@@ -18,33 +18,22 @@ db_conn = connections.Connection(
 
 )
 output = {}
-table = 'company'
+table = 'student'
+s3 = boto3.client('s3')
+
 
 @app.route("/", methods=['GET', 'POST'])
 def home():
-    return render_template('Home.html')
+    return render_template('StudLogin.html')
+
 
 @app.route("/studLogin", methods=['GET', 'POST'])
 def studLogin():
-    cohort = request.form['cohort']
-    internPeriod = request.form['internPeriod']
-    studName = request.form['studName']
-    studId = request.form['studId']
-    studIc = request.form['studIc']
-    studGender = request.form['studGender']
-    programme = request.form['programme']
     studEmail = request.form['studEmail']
-    studContact = request.form['studContact']
-    uniSupervisor = request.form['uniSupervisor']
-    uniEmail = request.form['uniEmail']
-    companyName = ""
-    monthlyAllowance = ""
-    companySvName = ""
-    companySvEmail = ""
+    studIc = request.form['studIc']
 
 
     fetch_student_sql = "SELECT * FROM student WHERE studEmail = %s"
-    #fetch_company_sql = "SELECT * FROM company WHERE status = %s"
     cursor = db_conn.cursor()
 
     if studEmail == "" and studIc == "":
@@ -54,8 +43,6 @@ def studLogin():
         cursor.execute(fetch_student_sql, (studEmail))
         records = cursor.fetchall()
 
-        # cursor.execute(fetch_company_sql, (status))
-        # companyRecords = cursor.fetchall()
 
         if records and records[0][4] != studIc:
             return render_template('StudLogin.html', login_failed=True)
@@ -68,257 +55,59 @@ def studLogin():
     finally:
         cursor.close()
 
-@app.route("/companyReg", methods=['POST'])
-def companyReg():
+@app.route("/studPage", methods=['GET','POST'])
+def studPage():
+
     companyName = request.form['companyName']
-    companyEmail = request.form['companyEmail']
-    companyContact = request.form['companyContact']
-    companyAddress = request.form['companyAddress']
-    typeOfBusiness = request.form['typeOfBusiness']
-    numOfEmployee = request.form['numOfEmployee']
-    overview = request.form['overview']
-    companyPassword = request.form['companyPassword']
-    status = "Pending Approval"
-
-   
-    insert_sql = "INSERT INTO company VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"
-    cursor = db_conn.cursor()
-
-     
-
-    try:
-
-        cursor.execute(insert_sql, (companyName, companyEmail, companyContact, companyAddress, typeOfBusiness, numOfEmployee, overview, companyPassword, status,))
-        db_conn.commit()
-        
-
-    except Exception as e:
-        return str(e) 
-        
-
-    finally:
-        cursor.close()
-
-    return render_template('CompanyRegister.html', registerSuccessful=True)
-
-@app.route("/StudViewCompany")
-def StudViewCompany():
-    status = "Approved"
-
-    fetch_company_sql = "SELECT * FROM company WHERE status = %s"
-    cursor = db_conn.cursor()
-
-    try:
-        cursor.execute(fetch_company_sql, (status))
-        companyRecords = cursor.fetchall()
+    companyAllowance = request.form['companyAllowance']
+    companySvName = request.form['companySvName']
+    companySvEmail = request.form['companySvEmail']
+    studId = request.args.get('studId')
+    companyApForm = request.files['companyApForm']
+    parentAckForm = request.files['parentAckForm']
+    letterOIdt = request.files['letterOIdt']
+    hiredEvid = request.files['hiredEvid']
     
-        return render_template('StudViewCompany.html', company=companyRecords)    
 
-    except Exception as e:
-        return str(e)      
-
-    finally:
-        cursor.close()
-
-
-
-@app.route("/studRegister", methods=['POST'])
-def studRegister():
-    cohort = request.form['cohort']
-    internPeriod = request.form['internPeriod']
-    studName = request.form['studName']
-    studId = request.form['studId']
-    studIc = request.form['studIc']
-    studGender = request.form['studGender']
-    programme = request.form['programme']
-    studEmail = request.form['studEmail']
-    studContact = request.form['studContact']
-    uniSupervisor = request.form['uniSupervisor']
-    uniEmail = request.form['uniEmail']
-    companyName = ""
-    monthlyAllowance = ""
-    companySvName = ""
-    companySvEmail = ""
-
-   
-    insert_sql = "INSERT INTO student VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+    sql = "UPDATE student SET companyName = %s AND companyAllowance = %s AND companySvName = %s AND companySvEmail = %s WHERE studId = %s"
     cursor = db_conn.cursor()
-
-     
 
     try:
 
-        cursor.execute(insert_sql, (cohort, internPeriod, studName, studId, studIc, studGender, programme, studEmail, studContact, uniSupervisor, uniEmail
-                                   ,companyName ,monthlyAllowance ,companySvName, companySvEmail))
+        cursor.execute(sql, (companyName, companyAllowance,companySvName, companySvEmail, studId,))
         db_conn.commit()
-        
+       
+        emp_image_file_name_in_s3 = "stud-id-" + str(studId) + "_file.pnf"
+        s3 = boto3.resource('s3')
 
-    except Exception as e:
-        return str(e) 
-        
+        try:
+            print("Data inserted in MySQL RDS... uploading files to S3...")
+            s3.Bucket(custombucket).put_object(Key=emp_image_file_name_in_s3, Body=companyApForm)
+            s3.Bucket(custombucket).put_object(Key=emp_image_file_name_in_s3, Body=parentAckForm)
+            s3.Bucket(custombucket).put_object(Key=emp_image_file_name_in_s3, Body=letterOIdt)
+            s3.Bucket(custombucket).put_object(Key=emp_image_file_name_in_s3, Body=hiredEvid)
+            bucket_location = boto3.client('s3').get_bucket_location(Bucket=custombucket)
+            s3_location = (bucket_location['LocationConstraint'])
 
+            if s3_location is None:
+                s3_location = ''
+            else:
+                s3_location = '-' + s3_location
+
+            object_url = "https://s3{0}.amazonaws.com/{1}/{2}".format(
+                s3_location,
+                custombucket,
+                emp_image_file_name_in_s3)
+
+        except Exception as e:
+            return str(e)
+       
     finally:
         cursor.close()
 
     print("all modification done...")
-    return render_template('StudRegister.html', studRegisterSuccessfully = True)
-
-
-
-
-@app.route("/adminLogin", methods=['GET', 'POST'])
-def adminLogin():
-    adminEmail = request.form['adminEmail']
-    adminPassword = request.form['adminPassword']
-    status = "Pending Approval"
-
-
+    return render_template('StudPage.html')
     
-    fetch_admin_sql = "SELECT * FROM admin WHERE adminEmail = %s"
-    fetch_company_sql = "SELECT * FROM company WHERE status = %s"
-    cursor = db_conn.cursor()
-
-    if adminEmail == "" and adminPassword == "":
-        return render_template('AdminLogin.html', empty_field=True)
-
-    try:
-        cursor.execute(fetch_admin_sql, (adminEmail,))
-        records = cursor.fetchall()
-
-        cursor.execute(fetch_company_sql, (status,))
-        companyRecords = cursor.fetchall()
-
-        if not records:
-            return render_template('AdminLogin.html', login_failed=True)
-        if records and records[0][2] != adminPassword:
-            return render_template('AdminLogin.html', login_failed=True)
-        else:
-            return render_template('AdminPage.html', admin=records, company=companyRecords)
-
-    except Exception as e:
-        return str(e)
-
-    finally:
-        cursor.close()
-
-
-@app.route("/approveCompany", methods=['GET', 'POST'])
-def approveCompany():
-
-    status="Approved"
-    status2="Pending Approval"
-    companyName = request.args.get('companyName')
-    adminEmail = request.args.get('adminEmail')
-
-    fetch_admin_sql = "SELECT * FROM admin WHERE adminEmail = %s"
-    fetch_company_sql = "SELECT * FROM company WHERE status = %s"
-    sql = "UPDATE company SET status = %s WHERE companyName = %s"
-    cursor = db_conn.cursor()
-
-  
-    try:
-        cursor.execute(fetch_admin_sql, (adminEmail,))
-        records = cursor.fetchall()
-        
-        cursor.execute(sql, (status, companyName,))
-        db_conn.commit()
-
-        cursor.execute(fetch_company_sql, (status2,))
-        companyRecords = cursor.fetchall()
-
-
-        return render_template('AdminPage.html', admin=records, company=companyRecords, updateSuccessful=True )
-
-    except Exception as e:
-        return str(e)
-
-    finally:
-        cursor.close()
-
-@app.route("/rejectCompany", methods=['GET', 'POST'])
-def rejectCompany():
-
-    status="Rejected"
-    status2="Pending Approval"
-    companyName = request.args.get('companyName')
-    adminEmail = request.args.get('adminEmail')
-
-    fetch_admin_sql = "SELECT * FROM admin WHERE adminEmail = %s"
-    fetch_company_sql = "SELECT * FROM company WHERE status = %s"
-    sql = "UPDATE company SET status = %s WHERE companyName = %s"
-    cursor = db_conn.cursor()
-
-  
-    try:
-        cursor.execute(fetch_admin_sql, (adminEmail,))
-        records = cursor.fetchall()
-        
-        cursor.execute(sql, (status, companyName,))
-        db_conn.commit()
-
-        cursor.execute(fetch_company_sql, (status2,))
-        companyRecords = cursor.fetchall()
-
-
-        return render_template('AdminPage.html', admin=records, company=companyRecords, updateSuccessful=True )
-
-    except Exception as e:
-        return str(e)
-
-    finally:
-        cursor.close()
-
-@app.route("/toAdminLogin")
-def toAdminLogin():
-    return render_template('AdminLogin.html') 
-
-@app.route("/toStudLogin")
-def toStudLogin():
-    return render_template('StudLogin.html') 
-
-@app.route("/toCompanyLogin")
-def toCompanyLogin():
-    return render_template('CompanyLogin.html') 
-
-@app.route("/toCompanyRegister")
-def toCompanyRegister():
-    return render_template('CompanyRegister.html') 
-
-@app.route("/toStudRegister")
-def toStudRegister():
-    return render_template('StudRegister.html') 
-
-
-@app.route("/companyLogin", methods=['GET', 'POST'])
-def companyLogin():
-    companyEmail = request.form['companyEmail']
-    companyPassword = request.form['companyPassword']
-    status = "Approved"
-
-    fetch_company_sql = "SELECT * FROM company WHERE companyEmail = %s"
-    cursor = db_conn.cursor()
-
-    if companyEmail == "" and companyPassword == "":
-        return render_template('CompanyLogin.html', empty_field=True)
-
-    try:
-        cursor.execute(fetch_company_sql, (companyEmail,))
-        records = cursor.fetchall()
-
-        if not records:
-            return render_template('CompanyLogin.html', login_failed=True)
-        if records[0][7] != companyPassword:
-            return render_template('CompanyLogin.html', login_failed=True)
-        elif records[0][8] != status:
-            return render_template('CompanyLogin.html', inactive_acc=True)
-        else:
-            return render_template('CompanyPage.html', company=records)
-
-    except Exception as e:
-        return str(e)
-
-    finally:
-        cursor.close()
 
 
 if __name__ == '__main__':
