@@ -274,7 +274,7 @@ def toAdminLogin():
     return render_template('AdminLogin.html') 
 
 @app.route("/toStudLogin")
-def toAdminLogin():
+def toStudLogin():
     return render_template('StudLogin.html') 
 
 @app.route("/toCompanyLogin")
