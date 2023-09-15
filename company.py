@@ -21,7 +21,7 @@ output = {}
 table = 'company'
 
 
-@app.route("/", methods=['POST'])
+@app.route("/studRegister", methods=['POST'])
 def studRegister():
     cohort = request.form['cohort']
     internPeriod = request.form['internPeriod']
@@ -63,7 +63,7 @@ def studRegister():
     return render_template('StudRegister.html')
 
 
-@app.route("/StudViewCompany")
+@app.route("/")
 def StudViewCompany():
     status = "Approved"
 
