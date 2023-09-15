@@ -273,6 +273,10 @@ def rejectCompany():
 def toAdminLogin():
     return render_template('AdminLogin.html') 
 
+@app.route("/toStudLogin")
+def toAdminLogin():
+    return render_template('StudLogin.html') 
+
 @app.route("/toCompanyLogin")
 def toCompanyLogin():
     return render_template('CompanyLogin.html') 
